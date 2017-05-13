@@ -390,16 +390,20 @@ Route::group(['prefix' => 'leader'], function () {
  * Route Member
  */
 Route::group(['middleware' => 'auth'], function () {
+    Route::get('get-db-query',[
+        'uses'=>'MemberController@getDbQuery',
+        'as'=>'getDbQuery'
+    ]);
     Route::get('update-profile', [
         'uses' => 'AdminController@getUpdateMyProfile',
         'as' => 'updateMyProfile'
     ]);
     Route::get('update-profile-leader', [
-        'uses' => 'AdminController@getUpdateMyProfile',
+        'uses' => 'AdminController@getLeaderUpdateMyProfile',
         'as' => 'profileLeader'
     ]);
     Route::get('update-profile-member-base', [
-        'uses' => 'AdminController@getUpdateMyProfile',
+        'uses' => 'AdminController@getMemberUpdateMyProfile',
         'as' => 'memberBaseProfile'
     ]);
     Route::post('update-profile', [
@@ -487,6 +491,22 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('member-report', [
             'uses' => 'MemberController@getMemberReport',
             'as' => 'memberReport'
+        ]);
+        Route::get('member-view-layout',[
+            'uses'=>'MemberController@getMememberViewLayout',
+            'as'=>'memberViewLayout'
+        ]);
+        Route::get('single-notification',[
+            'uses'=>'MemberController@getSingleNot',
+            'as'=>'singleNot'
+        ]);
+        Route::get('sigle-message',[
+            'uses'=>'MemberController@getSingleMessage',
+            'as'=>'singleMessage'
+        ]);
+        Route::get('load-member-report',[
+            'uses'=>'MemberController@getLoadMemberReport',
+            'as'=>'loadMemberReport'
         ]);
 
 

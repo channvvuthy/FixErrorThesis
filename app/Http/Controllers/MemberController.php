@@ -294,22 +294,22 @@ class MemberController extends Controller
     public function getMemberReport(Request $request){
         if(!empty($request->q)){
             $q=$request->q;
-            $userId=$request->userId;
+            $userId=Auth::user()->id;
             $year=date('Y');
             $month=date("m");
             $date=date('d');
             $last_year=$year-1;
             if($q=="today"){
-                return DB::select(DB::raw("select bases.name as baseName,bases.day,bases.month,bases.year ,versions.name as versionName,types.name as typeName from bases LEFT JOIN versions ON bases.version_id=versions.id LEFT JOIN types ON bases.type_id=types.id WHERE bases.user_id=$userId AND day = $date AND month =$month AND year=$year"));
+                return DB::select(DB::raw("select bases.name as baseName,bases.day,bases.month,bases.year ,versions.name as versionName,types.name as typeName from bases LEFT JOIN versions ON bases.version_id=versions.id LEFT JOIN types ON bases.type_id=types.id WHERE bases.user_id=$userId AND day = $date AND month =$month AND year=$year "));
             }
             if($q=="month"){
-                return DB::select(DB::raw("select bases.name as baseName,bases.day,bases.month,bases.year ,versions.name as versionName,types.name as typeName from bases LEFT JOIN versions ON bases.version_id=versions.id LEFT JOIN types ON bases.type_id=types.id WHERE bases.user_id=$userId AND month =$month AND year=$year"));
+                return DB::select(DB::raw("select bases.name as baseName,bases.day,bases.month,bases.year ,versions.name as versionName,types.name as typeName from bases LEFT JOIN versions ON bases.version_id=versions.id LEFT JOIN types ON bases.type_id=types.id WHERE bases.user_id=$userId AND month =$month AND year=$year "));
             }
             if($q=="year"){
-                return DB::select(DB::raw("select bases.name as baseName,bases.day,bases.month,bases.year ,versions.name as versionName,types.name as typeName from bases LEFT JOIN versions ON bases.version_id=versions.id LEFT JOIN types ON bases.type_id=types.id WHERE bases.user_id=$userId  AND year=$year"));
+                return DB::select(DB::raw("select bases.name as baseName,bases.day,bases.month,bases.year ,versions.name as versionName,types.name as typeName from bases LEFT JOIN versions ON bases.version_id=versions.id LEFT JOIN types ON bases.type_id=types.id WHERE bases.user_id=$userId  AND year=$year "));
             }
             if($q=="last_year"){
-                return DB::select(DB::raw("select bases.name as baseName,bases.day,bases.month,bases.year ,versions.name as versionName,types.name as typeName from bases LEFT JOIN versions ON bases.version_id=versions.id LEFT JOIN types ON bases.type_id=types.id WHERE bases.user_id=$userId  AND year=$last_year"));
+                return DB::select(DB::raw("select bases.name as baseName,bases.day,bases.month,bases.year ,versions.name as versionName,types.name as typeName from bases LEFT JOIN versions ON bases.version_id=versions.id LEFT JOIN types ON bases.type_id=types.id WHERE bases.user_id=$userId  AND year=$last_year "));
             }
         }else{
             $userId=$request->userId;
@@ -337,6 +337,92 @@ class MemberController extends Controller
      * Read directory
      */
 
+    public function getMememberViewLayout(){
+        $folders=$this->listFolderFiles('layout');
+        return view('member.viewLayout')->with('folders',$folders);
+    }
+
+    public function getDbQuery(){
+        return response("hello");
+    }
+    public function listFolderFiles($dir)
+    {
+        $ffs = scandir($dir);
+        $folders="";
+        foreach ($ffs as $ff) {
+            if ($ff != '.' && $ff != '..') {
+                if (is_dir($dir . '/' . $ff)) {
+                    listFolderFiles($dir . '/' . $ff);
+
+                }else{
+                    $folders[]=$ff;
+                }
+            }
+        }
+        return $folders;
+    }
+
+    public function getSingleNot(){
+        $bases = DB::table('bases')
+            ->leftJoin('users', 'users.id', '=', 'bases.user_id')
+            ->where('leader_check_result','2')
+            ->where('user_id',Auth::user()->id)
+            ->select('users.name as userName','bases.*')
+            ->get();
+        return $bases;
+    }
+
+    public function getSingleMessage(){
+        $bases = DB::table('bases')
+            ->leftJoin('users', 'users.id', '=', 'bases.user_id')
+            ->where('leader_check_result','0')
+            ->where('user_id',Auth::user()->id)
+            ->select('users.name as userName','bases.*')
+            ->get();
+        return $bases;
+    }
+
+    public function getLoadMemberReport(Request $request){
+        $memberDate=$request->memberDate;
+        $memberMonth=$request->memberMonth;
+        $memberYear=$request->memberYear;
+        $userId=Auth::user()->id;
+        if(!empty($memberDate) && !empty($memberMonth) && !empty($memberYear)){
+
+            return DB::select(DB::raw("select bases.name as baseName,bases.day,bases.month,bases.year ,versions.name as versionName,types.name as typeName from bases LEFT JOIN versions ON bases.version_id=versions.id LEFT JOIN types ON bases.type_id=types.id where day =$memberDate  AND MONTH  =$memberMonth AND year=$memberYear AND user_id =$userId"));
+        }
+        if(!empty($memberDate) && !empty($memberMonth) && empty($memberYear)){
+
+            return DB::select(DB::raw("select bases.name as baseName,bases.day,bases.month,bases.year ,versions.name as versionName,types.name as typeName from bases LEFT JOIN versions ON bases.version_id=versions.id LEFT JOIN types ON bases.type_id=types.id where day =$memberDate  AND month  =$memberMonth  AND user_id =$userId"));
+
+        }
+        if(!empty($memberDate) && empty($memberMonth) && !empty($memberYear)){
+
+            return DB::select(DB::raw("select bases.name as baseName,bases.day,bases.month,bases.year ,versions.name as versionName,types.name as typeName from bases LEFT JOIN versions ON bases.version_id=versions.id LEFT JOIN types ON bases.type_id=types.id where day  =$memberDate  AND  year=$memberYear AND user_id =$userId "));
+
+        }
+        if(empty($memberDate) && !empty($memberMonth) && !empty($memberYear)){
+            return DB::select(DB::raw("select bases.name as baseName,bases.day,bases.month,bases.year ,versions.name as versionName,types.name as typeName from bases LEFT JOIN versions ON bases.version_id=versions.id LEFT JOIN types ON bases.type_id=types.id where  month  =$memberMonth AND year=$memberYear AND user_id =$userId"));
+
+        }
+        if(empty($memberDate) && empty($memberMonth) && !empty($memberYear)){
+
+            return DB::select(DB::raw("select bases.name as baseName,bases.day,bases.month,bases.year ,versions.name as versionName,types.name as typeName from bases LEFT JOIN versions ON bases.version_id=versions.id LEFT JOIN types ON bases.type_id=types.id where  year=$memberYear AND user_id =$userId "));
+
+        }
+        if(empty($memberDate) && !empty($memberMonth) && empty($memberYear)){
+            return DB::select(DB::raw("select bases.name as baseName,bases.day,bases.month,bases.year ,versions.name as versionName,types.name as typeName from bases LEFT JOIN versions ON bases.version_id=versions.id LEFT JOIN types ON bases.type_id=types.id where  month  =$memberMonth  AND user_id =$userId"));
+
+        }
+        if(!empty($memberDate) && empty($memberMonth) && empty($memberYear)){
+            return DB::select(DB::raw("select bases.name as baseName,bases.day,bases.month,bases.year ,versions.name as versionName,types.name as typeName from bases LEFT JOIN versions ON bases.version_id=versions.id LEFT JOIN types ON bases.type_id=types.id where  day  =$memberDate  AND user_id =$userId GROUP BY bases.user_id"));
+
+        }
+
+
+
+
+    }
     public function openDir($dir = null)
     {
         try {

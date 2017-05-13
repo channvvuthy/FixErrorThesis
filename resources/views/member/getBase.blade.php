@@ -3,7 +3,7 @@
     Member
 @stop
 @section('content')
-    @include('layout.leaders.widget.header')
+    @include('layout.member.widget.header')
     @include('layout.member.widget.navbar')
     <div class="col-md-10">
         <div class="pangasu float">
@@ -41,18 +41,18 @@
                         @if(!empty(Auth::user()->bases))
                             @foreach(Auth::user()->bases as $base)
                                 <tr>
-                                    <td>{{$base->name}}</td>
+                                    <td id="{{$base->name}}">{{$base->name}}</td>
                                     <td class="link"><a href="{{$base->your_url.'/'.$base->name}}/index.php"
                                                         target="_blank">{{$base->your_url.'/'.$base->name}}</a></td>
                                     <td>{{Carbon\Carbon::parse($base->created_at)->format('d/m/Y')}}</td>
                                     <td>{{$base->leader_check_name}}</td>
                                     <td>
-                                        <select name="" id=""
+                                        <select name="" id="leaderChingResult"
                                                 @if($base->leader_check_result=="0") style="background-color:red;"
                                                 @elseif($base->leader_check_result=="1") style="background-color:green;"
                                                 @elseif($base->leader_check_result=="2" )style="background-color:darkorange;"
-                                                @else style="background-color:blue;" @endif class="form-control">
-                                            <option value="0" @if($base->leader_check_result=="0") selected @endif>
+                                                @else style="background-color:blue;" @endif class="form-control" data="{{$base->id}}">
+                                            <option value="0" @if($base->leader_check_result=="0") selected @endif >
                                                 Recorect
                                             </option>
                                             <option value="1" @if($base->leader_check_result=="1") selected @endif>
@@ -113,7 +113,7 @@
             <b>OR</b>
         </div>
         <div class="reportMember">
-            <select name="" id="" class="form-control">
+            <select name="" id="memberDate" class="form-control">
                 <option value="">Select Date</option>
                 @for($i=1;$i<=31;$i++)
                     <option value="@if($i<10)0{{$i}} @else{{$i}} @endif">@if($i<10)0{{$i}} @else{{$i}} @endif</option>
@@ -121,7 +121,7 @@
             </select>
         </div>
         <div class="reportMember">
-            <select name="" id="" class="form-control">
+            <select name="" id="memberMonth" class="form-control">
                 <option value="">Select Month</option>
                 @for($i=1;$i<=12;$i++)
                     <option value="@if($i<10)0{{$i}} @else{{$i}} @endif">@if($i<10)0{{$i}} @else{{$i}} @endif</option>
@@ -129,10 +129,10 @@
             </select>
         </div>
         <div class="reportMember">
-            <input type="text" name="" id="" class="form-control" placeholder="2017">
+            <input type="text" name="" id="memberYear" class="form-control" placeholder="2017">
         </div>
         <div class="reportMember">
-            <button class="btn btn-success ">Load</button>
+            <button class="btn btn-success MemerLoad ">Load</button>
         </div>
         <div class="clearfix"></div>
         <hr>
@@ -154,50 +154,108 @@
     </div>
     <script type="text/javascript">
         $(document).ready(function () {
-            var tr="";
+            var tr = "";
             jQuery.ajax({
-                url:"{{route('memberReport')}}",
-                type:"GET",
-                dataTaype:"json",
-                data:{userId:"{{Auth::user()->id}}"},
-                success:function (data) {
-                    var total=0;
-                    for(var i=0;i<data.length;i++){
+                url: "{{route('memberReport')}}",
+                type: "GET",
+                dataTaype: "json",
+                data: {userId: "{{Auth::user()->id}}"},
+                success: function (data) {
+                    var total = 0;
+                    for (var i = 0; i < data.length; i++) {
                         total++;
-                        tr+='<tr><td>'+data[i]['baseName']+'</td><td>'+data[i]['versionName']+'</td><td>'+data[i]['typeName']+'</td><td>'+data[i]['day']+'</td><td>'+data[i]['month']+'</td><td>'+data[i]['year']+'</td></tr>';
+                        tr += '<tr><td>' + data[i]['baseName'] + '</td><td>' + data[i]['versionName'] + '</td><td>' + data[i]['typeName'] + '</td><td>' + data[i]['day'] + '</td><td>' + data[i]['month'] + '</td><td>' + data[i]['year'] + '</td></tr>';
 
                     }
-                    tr+='<tr><td colspan="6" align="right">Total  '+total+'</td></tr>';
+                    tr += '<tr><td colspan="6" align="right">Total  ' + total + '</td></tr>';
                     $(".memberReport tbody").html(tr);
                 },
-                complete:function () {
+                complete: function () {
 
                 }
             });
 
-            $("body").on("change","#autoSelect",function () {
-               var q=$(this).val();
-               var tr="";
+            $("body").on("change", "#autoSelect", function () {
+                var q = $(this).val();
+                var tr = "";
                 jQuery.ajax({
-                    url:"{{route('memberReport')}}",
-                    type:"GET",
-                    dataTaype:"json",
-                    data:{userId:"{{Auth::user()->id}}",q:q},
-                    success:function (data) {
-                        var total=0;
-                        for(var i=0;i<data.length;i++){
+                    url: "{{route('memberReport')}}",
+                    type: "GET",
+                    dataTaype: "json",
+                    data: {userId: "{{Auth::user()->id}}", q: q},
+                    success: function (data) {
+                        var total = 0;
+                        for (var i = 0; i < data.length; i++) {
                             total++;
-                            tr+='<tr><td>'+data[i]['baseName']+'</td><td>'+data[i]['versionName']+'</td><td>'+data[i]['typeName']+'</td><td>'+data[i]['day']+'</td><td>'+data[i]['month']+'</td><td>'+data[i]['year']+'</td></tr>';
+                            tr += '<tr><td>' + data[i]['baseName'] + '</td><td>' + data[i]['versionName'] + '</td><td>' + data[i]['typeName'] + '</td><td>' + data[i]['day'] + '</td><td>' + data[i]['month'] + '</td><td>' + data[i]['year'] + '</td></tr>';
                         }
-                        tr+='<tr><td colspan="6" align="right">Total  '+total+'</td></tr>';
+                        tr += '<tr><td colspan="6" align="right">Total  ' + total + '</td></tr>';
                         $(".memberReport tbody").html(tr);
 
                     },
-                    complete:function () {
+                    complete: function () {
 
                     }
                 });
             });
+            $(".MemerLoad").click(function () {
+                var memberDate = $("#memberDate").val();
+                var memberMonth = $("#memberMonth").val();
+                var memberYear = $("#memberYear").val();
+                var tr = "";
+                jQuery.ajax({
+                    url: "{{route('loadMemberReport')}}",
+                    type: "GET",
+                    dataType: "json",
+                    data: {memberDate: memberDate, memberMonth: memberMonth, memberYear: memberYear},
+                    success: function (data) {
+
+                        var total = 0;
+                        for (var i = 0; i < data.length; i++) {
+                            console.log(data[i]);
+                            total++;
+                            tr += '<tr><td>' + data[i]['baseName'] + '</td><td>' + data[i]['versionName'] + '</td><td>' + data[i]['typeName'] + '</td><td>' + data[i]['day'] + '</td><td>' + data[i]['month'] + '</td><td>' + data[i]['year'] + '</td></tr>';
+
+                        }
+                        tr += '<tr><td colspan="6" align="right">Total  ' + total + '</td></tr>';
+                        $(".memberReport tbody").html(tr);
+                    },
+                    complete: function () {
+
+                    }
+                });
+            });
+        });
+        $("body").on('change', '#leaderChingResult', function () {
+            var baseId = $(this).attr('data');
+            var baseName = $(this).val();
+            $("#leaderChingResult optoin[value=" + baseName + "]").attr('selected', 'selected');
+            if (baseName == "0") {
+                $(this).css({"background-color": "red"});
+
+            } else if (baseName == "1") {
+                $(this).css({"background-color": "green"})
+            } else if (baseName == "2") {
+                $(this).css({"background-color": "darkorange"})
+            } else if (baseName == "3") {
+                $(this).css({"background-color": "#00BCD4"})
+            }
+            jQuery.ajax({
+                url: "{{route('upateResuleBaseLeaderCheck')}}",
+                type: "GET",
+                dataType: "json",
+                data: {baseName: baseName, baseId: baseId},
+                success: function (data) {
+
+                },
+                complete: function (data) {
+
+                },
+                error: function () {
+
+                }
+            });
+
         });
     </script>
 @stop

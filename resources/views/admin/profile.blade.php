@@ -1,7 +1,7 @@
 @extends('layout.admin.master')
 @section('content')
-    @include('layout.leaders.widget.header')
-    @include('layout.leaders.widget.navbar')
+    @include('layout.admin.widget.header')
+    @include('layout.admin.widget.navbar')
     <div class="col-md-10">
         <div class="pangasu float">
             <ul class="list-unstyled">

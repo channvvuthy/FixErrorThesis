@@ -116,7 +116,7 @@ class AdminController extends Controller
         $group->type = $groupType;
         $group->description = $groupDescription;
         $group->save();
-        $group->users()->attach(Auth::user()->id);
+//        $group->users()->attach(Auth::user()->id);
         return redirect()->back()->withInput()->withErrors(['notice' => 'group has been created']);
 
     }
@@ -279,6 +279,12 @@ class AdminController extends Controller
     }
     public  function  getUpdateMyProfile(Request $request){
         return view('admin.profile');
+    }
+    public  function getLeaderUpdateMyProfile(Request  $request){
+        return view('leader.profile');
+    }
+    public  function getMemberUpdateMyProfile(){
+        return view('member.profile');
     }
     public function postUpdateMyProfile(Request $request){
         $id=Auth::user()->id;

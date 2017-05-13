@@ -1,9 +1,9 @@
-@extends('layout.leaders.master')
+@extends('layout.member.master')
 @section('title')
     Member
 @stop
 @section('content')
-    @include('layout.leaders.widget.header')
+    @include('layout.member.widget.header')
     @include('layout.member.widget.navbar')
     <div class="col-md-10">
         <div class="pangasu float">

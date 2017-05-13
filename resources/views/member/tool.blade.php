@@ -9,7 +9,7 @@
     Member
 @stop
 @section('content')
-    @include('layout.leaders.widget.header')
+    @include('layout.member.widget.header')
     @include('layout.member.widget.navbar')
     <div class="col-md-10" style="width:1100px;max-height:600px;overflow: auto;">
         <div class="pangasu float">
