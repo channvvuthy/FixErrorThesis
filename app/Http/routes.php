@@ -381,6 +381,13 @@ Route::group(['prefix' => 'leader'], function () {
             'as' => 'loadReportBase'
         ]);
 
+        Route::get('leader-first-get-base',[
+            'uses'=>'LeaderController@getLeaderFirstGetBase',
+            'as'=>'leaderFirstGetBase'
+        ]);
+
+
+
     });
 
 });

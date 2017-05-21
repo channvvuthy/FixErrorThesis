@@ -191,11 +191,12 @@
                                     </td>
                                     <td class="userby">
                                         <input type="text" name="used_by[]" id="" value="{{$base->used_by}}">
-                                        <input type="hidden" name="used_by_id[]" value="">
+                                        <input type="hidden" name="used_by_id[]" value="{{$base->used_by_id}}">
                                     </td>
                                     <td class="tdLayout">
                                         <input type="text" name="laout[]" id=""
                                                value="@if(!empty($base->layouts)) @foreach($base->layouts as $layout) {{$layout->name}}, @endforeach @endif"
+                                               title="@if(!empty($base->layouts)) @foreach($base->layouts as $layout) {{$layout->name."/"}} @endforeach @endif"
                                                data="{{$base->id}}">
                                     </td>
                                     <td class="baseURL">
