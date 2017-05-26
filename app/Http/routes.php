@@ -386,6 +386,17 @@ Route::group(['prefix' => 'leader'], function () {
             'as'=>'leaderFirstGetBase'
         ]);
 
+        Route::get('add-new-order',[
+            'uses'=>'LeaderController@getAddNewOrder',
+            'as'=>'addNewOrder'
+        ]);
+        Route::post('add-new-order',[
+            'uses'=>'LeaderController@postAddNewOrder'
+        ]);
+        Route::get('leader-first-get-order',[
+            'uses'=>'LeaderController@getLeaderFirstGetOrder',
+            'as'=>'leaderFirstGetOrder'
+        ]);
 
 
     });

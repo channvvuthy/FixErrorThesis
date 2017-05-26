@@ -30,10 +30,10 @@
             <li><a href="{{route('leaderFirstGetBase')}}"><img src="{{asset('icon/get.png')}}" alt="">Get
                     Base</a>
             </li>
-            <li><a href="{{route('leaderFirstGetBase')}}"><img src="{{asset('icon/new.png')}}" alt="">Add
+            <li><a href="{{route('addNewOrder')}}"><img src="{{asset('icon/new.png')}}" alt="">Add
                     New Order</a>
             </li>
-            <li><a href="{{route('leaderFirstGetBase')}}"><img src="{{asset('icon/orders.png')}}" alt="">Order</a>
+            <li><a href="{{route('leaderFirstGetOrder')}}"><img src="{{asset('icon/orders.png')}}" alt="">Order</a>
             </li>
             <li><a href="{{route('leaderFirstGetBase')}}"><img src="{{asset('icon/1489860783_SignOut.png')}}" alt="">Logout</a>
             </li>

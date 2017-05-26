@@ -13,6 +13,7 @@ use App\Models\Base;
 use App\Models\Layout;
 use DB;
 use Excel;
+use App\Models\Order;
 
 class LeaderController extends Controller
 {
@@ -534,7 +535,39 @@ class LeaderController extends Controller
         return view('leader.leaderFirstGetBase')->with('baseOfGroups', $baseOfGroups);
     }
 
+    public  function getAddNewOrder(Request $request){
+        return view('leader.addNewOrder');
+    }
 
+    public function postAddNewOrder(Request $request){
+        $this->validate($request,[
+            'file'=>'required'
+        ]);
+        $file=$request->file('file');
+        $fileName="";
+        if(!empty($file)){
+            $fileName=$file->getClientOriginalName();
+            $arrayString=explode(".",$fileName);
+            $extension=end($arrayString);
+            if($extension !="csv"){
+                return redirect()->back()->withInput()->withErrors(['error'=>'Please upload only csv file']);
+            }else{
+                Excel::load($request->file('file'),function($reader){
+                    $reader->each(function($sheet){
+                        Order::firstOrCreate($sheet->toArray());
+                    });
+                });
+                return redirect()->back()->withInput()->withErrors(['notice'=>'Order Uploaded']);
+
+            }
+
+
+        }
+
+    }
+    public function getLeaderFirstGetOrder(Request $request){
+        return view('leader.leaderFirstGetOrder');
+    }
     public function openDir($dir = null)
     {
         try {
